@@ -1,16 +1,47 @@
-## Advanced Lane Finding
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
-
-
-In this project, your goal is to write a software pipeline to identify the lane boundaries in a video, but the main output or product we want you to create is a detailed writeup of the project.  Check out the [writeup template](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup.  
-
-Creating a great writeup:
+Advanced Lane Finding
 ---
-A great writeup should include the rubric points as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
 
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
+This aim of this project is to identify road lanes using a suite of computer vision techniques.
+The steps undertaken are:
+* Calculate camera calibration matrix
+* Correct image distortion
+* Create thresholded binary image
+* Apply perspective transform to obtain "top view" ("birds-eye view")
+* Detect lanes
+* Determine curvature and vehicle position
+* Apply lane pixels on original input image
+* Visualize image with corresponding lanes and curvature/position values
 
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
+
+[//]: # (Image References)
+
+[image1]: ./output_images/chessboard_original.jpg "Chessboard"
+[image2]: ./output_images/chessboard_corners.jpg "Chessboard corners"
+
+
+### Camera calibration
+The first step of the project was to compute the camera calibration matrix. This was done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object. The camera distortion can thus be calculated by comparing straight lines to the curves making up the chessboard in the image.
+
+Chessboard original     | Chessboard corners
+:----------------------:|:-------------------------:
+![alt text][image1]     |  ![alt text][image2]
+
+### Distortion correction
+
+### Thresholded binary image
+
+### Perspective transform
+
+### Lane detection
+
+### Curvature radius and vehicle position
+ 
+### Lane pixel overlay on original image
+
+### Visualization of lanes, curvature and position
+
+
+
 
 The Project
 ---
