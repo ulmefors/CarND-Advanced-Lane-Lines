@@ -18,15 +18,34 @@ The steps undertaken are:
 [image1]: ./output_images/chessboard_original.jpg "Chessboard"
 [image2]: ./output_images/chessboard_corners.jpg "Chessboard corners"
 
-
 ### Camera calibration
-The first step of the project was to compute the camera calibration matrix. This was done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object. The camera distortion can thus be calculated by comparing straight lines to the curves making up the chessboard in the image.
+The first step is to compute the camera calibration matrix. This is done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object.
+The camera distortion can thus be calculated by comparing real world straight lines to the curves in the image.
+The corners are found using OpenCV taking a gray-scale image and the corner grid shape as inputs.
+    
+    ret, corners = cv2.findChessboardCorners(gray, (nx, ny), None)
+    
+The identified corners are visualized using `cv2.drawChessboardCorners(img, (nx, ny), corners, ret)`.
 
 Chessboard original     | Chessboard corners
 :----------------------:|:-------------------------:
 ![alt text][image1]     |  ![alt text][image2]
 
+20 images were used to obtain calibration data. The corner grid coordinates and the corresponding pixel positions were saved for use during calibration. 
+ 
+    objp = np.zeros((nx*ny, 3), np.float32)
+    objp[:, :2] = np.mgrid[0:nx, 0:ny].T.reshape(-1, 2)
+    objpoints.append(objp)
+    imgpoints.append(corners)
+
 ### Distortion correction
+With `objpoints` and `imgpoints` defined thanks to the calibration images, it is possible to calculate the camera calibration matrix.
+    
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+    
+ The camera calibration matrix `mtx` is used to undistort images.
+    
+    undistorted_img = cv2.undistort(img, mtx, dist, None, mtx)
 
 ### Thresholded binary image
 
