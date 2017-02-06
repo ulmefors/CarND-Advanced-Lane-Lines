@@ -20,6 +20,8 @@ The steps undertaken are:
 [image3]: ./output_images/chessboard_undistort.jpg "Chessboard undistorted"
 [image4]: ./test_images/test6.jpg 
 [image5]: ./output_images/test6.jpg
+[image6]: ./output_images/calibration12_original.jpg
+[image7]: ./output_images/calibration12_perspective_transform.jpg
 
 ### Camera calibration
 The first step is to compute the camera calibration matrix. This is done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object.
@@ -59,6 +61,23 @@ Original                | Distortion correction
 ### Thresholded binary image
 
 ### Perspective transform
+All identified chessboard corners are stored in `corners` and the four outer corners (top-left, top-right, bottom-left, bottom-right) are selected.
+
+    src = np.float32([corners[0][0], corners[nx-1][0], corners[nx*(ny-1)][0], corners[nx*ny-1][0]])
+
+The destination positions are chosen as corners positioned with a distance `[offset, offset]` from image frame corners where `[x, y]` are image width, height respectively.   
+
+    dst = np.float32([[offset, offset],[x-offset, offset],[offset, y-offset],[x-offset, y-offset]])
+
+The perspective transform matrix `M` is calculated and used to transform camera perspective.
+
+    M = cv2.getPerspectiveTransform(src, dst)
+    warped = cv2.warpPerspective(img_undistorted, M, (x, y), flags=cv2.INTER_LINEAR)
+
+
+Original                | Perspective transform
+:----------------------:|:-------------------------:
+![alt text][image6]     |  ![alt text][image7]
 
 ### Lane detection
 
@@ -67,8 +86,6 @@ Original                | Distortion correction
 ### Lane pixel overlay on original image
 
 ### Visualization of lanes, curvature and position
-
-
 
 
 The Project
