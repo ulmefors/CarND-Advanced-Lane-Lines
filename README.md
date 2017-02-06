@@ -17,8 +17,9 @@ The steps undertaken are:
 
 [image1]: ./output_images/chessboard_original.jpg "Chessboard"
 [image2]: ./output_images/chessboard_corners.jpg "Chessboard corners"
-[image3]: ./test_images/test6.jpg 
-[image4]: ./output_images/test6.jpg
+[image3]: ./output_images/chessboard_undistort.jpg "Chessboard undistorted"
+[image4]: ./test_images/test6.jpg 
+[image5]: ./output_images/test6.jpg
 
 ### Camera calibration
 The first step is to compute the camera calibration matrix. This is done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object.
@@ -29,9 +30,9 @@ The corners are found using OpenCV taking a gray-scale image and the corner grid
     
 The identified corners are visualized using `cv2.drawChessboardCorners(img, (nx, ny), corners, ret)`.
 
-Chessboard original     | Chessboard corners
-:----------------------:|:-------------------------:
-![alt text][image1]     |  ![alt text][image2]
+Original     | Corners        | Undistorted
+:----------------------:|:-------------------------:|:------:
+![alt text][image1]     |  ![alt text][image2]      | ![alt text][image3] 
 
 20 images were used to obtain calibration data. The corner grid coordinates and the corresponding pixel positions were saved for use during calibration. 
  
@@ -53,7 +54,7 @@ A comparison is shown with original and resulting image after distortion correct
 
 Original                | Distortion correction
 :----------------------:|:-------------------------:
-![alt text][image3]     |  ![alt text][image4]
+![alt text][image4]     |  ![alt text][image5]
 
 ### Thresholded binary image
 
