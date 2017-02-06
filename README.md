@@ -17,6 +17,8 @@ The steps undertaken are:
 
 [image1]: ./output_images/chessboard_original.jpg "Chessboard"
 [image2]: ./output_images/chessboard_corners.jpg "Chessboard corners"
+[image3]: ./test_images/test6.jpg 
+[image4]: ./output_images/test6.jpg
 
 ### Camera calibration
 The first step is to compute the camera calibration matrix. This is done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object.
@@ -46,6 +48,12 @@ With `objpoints` and `imgpoints` defined thanks to the calibration images, it is
  The camera calibration matrix `mtx` is used to undistort images.
     
     undistorted_img = cv2.undistort(img, mtx, dist, None, mtx)
+
+A comparison is shown with original and resulting image after distortion correction. Changes are easily noticed at the top left corner.
+
+Original                | Distortion correction
+:----------------------:|:-------------------------:
+![alt text][image3]     |  ![alt text][image4]
 
 ### Thresholded binary image
 
