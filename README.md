@@ -20,8 +20,10 @@ The steps undertaken are:
 [image3]: ./output_images/chessboard_undistort.jpg "Chessboard undistorted"
 [image4]: ./test_images/test6.jpg 
 [image5]: ./output_images/test6.jpg
-[image6]: ./output_images/calibration12_original.jpg
-[image7]: ./output_images/calibration12_perspective_transform.jpg
+[image8]: ./output_images/calibration12_original.jpg
+[image9]: ./output_images/calibration12_perspective_transform.jpg
+[image6]: ./output_images/straight_lines1.jpg
+[image7]: ./output_images/straight_lines1_binary_thresholded.jpg
 
 ### Camera calibration
 The first step is to compute the camera calibration matrix. This is done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object.
@@ -60,6 +62,10 @@ Original                | Distortion correction
 
 ### Thresholded binary image
 
+Undistorted                | Thresholded binary
+:----------------------:|:-------------------------:
+![alt text][image6]     |  ![alt text][image7]
+
 ### Perspective transform
 All identified chessboard corners are stored in `corners` and the four outer corners (top-left, top-right, bottom-left, bottom-right) are selected.
 
@@ -77,7 +83,7 @@ The perspective transform matrix `M` is calculated and used to transform camera 
 
 Original                | Perspective transform
 :----------------------:|:-------------------------:
-![alt text][image6]     |  ![alt text][image7]
+![alt text][image8]     |  ![alt text][image9]
 
 ### Lane detection
 
