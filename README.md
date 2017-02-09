@@ -61,6 +61,27 @@ Original                | Distortion correction
 ![alt text][image4]     |  ![alt text][image5]
 
 ### Thresholded binary image
+In order to efficiently detect lane lines we use a combination of gradient filters based on the Sobel operator using a gray-scale image as input.
+The `ksize` parameter specifies the kernel size with larger values resulting in blurred, smooth output.
+The Sobel operators output gradients in the x-direction and y-direction respectively.
+    
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
+    
+The gradients are also combined to find total magnitude (hypotenuse) and direction.
+ 
+    sobel_magnitude = np.sqrt(sobelx**2 + sobely**2)
+    sobel_direction = np.arctan2(sobely, sobelx)
+    
+Binary thresholded images for the four individual gradients are created by comparing the gradient values to defined minimum and maximum thresholds.
+
+    grad_binary[(sobel >= thresh_min) & (sobel <= thresh_max)] = 1
+    
+In the final stage we combine all four gradients by activating pixels that have been identified in the separate filters (gradient x, gradient x, magnitude, direction).
+
+    combined[((gradx == 1) & (grady == 1)) & ((mag_binary == 1) & (dir_binary == 1))] = 1
+    
+The resulting binary thresholded image successfully identifies the lane lines and filters out the majority of unwanted edges.
 
 Undistorted                | Thresholded binary
 :----------------------:|:-------------------------:
