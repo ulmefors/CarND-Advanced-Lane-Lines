@@ -24,6 +24,10 @@ The steps undertaken are:
 [image9]: ./output_images/calibration12_perspective_transform.jpg
 [image6]: ./output_images/straight_lines1.jpg
 [image7]: ./output_images/straight_lines1_binary_thresholded.jpg
+[image10]: ./test_images/straight_lines2.jpg
+[image11]: ./output_images/straight_lines2_masked.jpg
+[image12]: ./output_images/straight_lines2_masked_transformed.jpg
+
 
 ### Camera calibration
 The first step is to compute the camera calibration matrix. This is done by identifying corners in chessboard images. The grid of chessboard corners must consist of parallell lines in the real world object.
@@ -61,25 +65,26 @@ Original                | Distortion correction
 ![alt text][image4]     |  ![alt text][image5]
 
 ### Thresholded binary image
-In order to efficiently detect lane lines we use a combination of gradient filters based on the Sobel operator using a gray-scale image as input.
-The `ksize` parameter specifies the kernel size with larger values resulting in blurred, smooth output.
+In order to efficiently detect lane lines we employ a combination of gradient filters based on the Sobel operator using a gray-scale image as input.
 The Sobel operators output gradients in the x-direction and y-direction respectively.
+The `ksize` parameter specifies the kernel size with larger values smoothing the image and thereby filtering out small high contrast features that are not lane lines.
     
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
     sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
     
-The gradients are also combined to find total magnitude (hypotenuse) and direction.
+The x- and y- gradients are also combined to find gradient magnitude (vector sum, length of hypotenuse) and gradient direction.
  
     sobel_magnitude = np.sqrt(sobelx**2 + sobely**2)
     sobel_direction = np.arctan2(sobely, sobelx)
     
-Binary thresholded images for the four individual gradients are created by comparing the gradient values to defined minimum and maximum thresholds.
+Binary thresholded images for the four individual gradients are created by evaluating whether the gradient values fall between defined minimum and maximum bounds.
 
+    grad_binary = np.zeros_like(sobel)
     grad_binary[(sobel >= thresh_min) & (sobel <= thresh_max)] = 1
     
-In the final stage we combine all four gradients by activating pixels that have been identified in the separate filters (gradient x, gradient x, magnitude, direction).
+In the final stage we combine all four gradients by activating pixels that have been identified in the separate filters (x-gradient, y-gradient, magnitude, direction).
 
-    combined[((gradx == 1) & (grady == 1)) & ((mag_binary == 1) & (dir_binary == 1))] = 1
+    combined[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1))] = 1
     
 The resulting binary thresholded image successfully identifies the lane lines and filters out the majority of unwanted edges.
 
@@ -105,6 +110,13 @@ The perspective transform matrix `M` is calculated and used to transform camera 
 Original                | Perspective transform
 :----------------------:|:-------------------------:
 ![alt text][image8]     |  ![alt text][image9]
+
+Using an input image with straight lanes we define a trapezoid that encompasses the lanes of interest but ignores the surroundings.
+The area is transformed into a rectangle that will be used for lane detection.
+
+Original                | Masked                    | Transformed
+:----------------------:|:-------------------------:|:------:
+![alt text][image10]    |  ![alt text][image11]     | ![alt text][image12] 
 
 ### Lane detection
 
