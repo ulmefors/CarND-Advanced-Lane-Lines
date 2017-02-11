@@ -42,19 +42,31 @@ def dir_threshold(gray, sobel_kernel=3, thresh=(0, np.pi / 2)):
     return dir_binary
 
 
-def get_binary(gray):
+def get_binary(image):
+
+    # HLS
+    hls = cv2.cvtColor(np.copy(image), cv2.COLOR_RGB2HLS)
+    s_channel = hls[:, :, 2]
+    s_thresh_min = 160
+    s_thresh_max = 255
+    s_binary = np.zeros_like(s_channel)
+    s_binary[(s_channel >= s_thresh_min) & (s_channel <= s_thresh_max)] = 1
+
+    gray = cv2.cvtColor(np.copy(image), cv2.COLOR_BGR2GRAY)
 
     # Choose a Sobel kernel size
     ksize = 25  # Choose a larger odd number to smooth gradient measurements
 
     # Apply each of the thresholding functions
-    gradx = abs_sobel_thresh(gray, orient='x', sobel_kernel=ksize, thresh=(65, 250))
-    grady = abs_sobel_thresh(gray, orient='y', sobel_kernel=ksize, thresh=(65, 250))
-    mag_binary = mag_thresh(gray, sobel_kernel=ksize, thresh=(100, 250))
+    gradx = abs_sobel_thresh(gray, orient='x', sobel_kernel=ksize, thresh=(40, 250))
+    grady = abs_sobel_thresh(gray, orient='y', sobel_kernel=ksize, thresh=(40, 250))
+    mag_binary = mag_thresh(gray, sobel_kernel=ksize, thresh=(50, 250))
     dir_binary = dir_threshold(gray, sobel_kernel=ksize, thresh=(np.pi / 4 * 0.6, np.pi / 4 * 1.5))
 
-    combined = np.zeros_like(dir_binary)
-    combined[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1))] = 1
+    combined = np.zeros_like(gray)
+    combined_grad = np.zeros_like(gray)
+    combined_grad[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1))] = 1
+    combined[(s_binary == 1) | (combined_grad == 1)] = 1
 
     return combined
 

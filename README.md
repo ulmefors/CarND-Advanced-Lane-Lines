@@ -15,18 +15,18 @@ The steps undertaken are:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/chessboard_original.jpg "Chessboard"
-[image2]: ./output_images/chessboard_corners.jpg "Chessboard corners"
-[image3]: ./output_images/chessboard_undistort.jpg "Chessboard undistorted"
+[image1]: ./readme_images/chessboard_original.jpg "Chessboard"
+[image2]: ./readme_images/chessboard_corners.jpg "Chessboard corners"
+[image3]: ./readme_images/chessboard_undistort.jpg "Chessboard undistorted"
 [image4]: ./test_images/test6.jpg 
-[image5]: ./output_images/test6.jpg
-[image8]: ./output_images/calibration12_original.jpg
-[image9]: ./output_images/calibration12_perspective_transform.jpg
-[image6]: ./output_images/straight_lines1.jpg
-[image7]: ./output_images/straight_lines1_binary_thresholded.jpg
+[image5]: ./readme_images/undistorted_test6.jpg
+[image6]: ./readme_images/undistorted_straight_lines1.jpg
+[image7]: ./readme_images/undistorted_straight_lines1_binary_thresholded.jpg
+[image8]: ./readme_images/calibration12_original.jpg
+[image9]: ./readme_images/calibration12_perspective_transform.jpg
 [image10]: ./test_images/straight_lines2.jpg
-[image11]: ./output_images/straight_lines2_masked.jpg
-[image12]: ./output_images/straight_lines2_masked_transformed.jpg
+[image11]: ./readme_images/straight_lines2_masked.jpg
+[image12]: ./readme_images/straight_lines2_masked_transformed.jpg
 
 
 ### Camera calibration
