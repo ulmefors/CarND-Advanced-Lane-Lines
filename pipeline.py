@@ -47,10 +47,10 @@ def pipeline(image):
 def main():
 
     # Run video or single image
-    video = True
+    video = False
 
     # Specify inputs and outputs
-    image_file = 'test_images/test6.jpg'
+    image_file = 'test_images/test5.jpg'
     video_file = 'project_video_super_short'
     video_output_dir = 'output_videos/'
 
@@ -68,8 +68,8 @@ def main():
         # Plot image with detected lanes
         image = cv2.imread(image_file)
         result = pipeline(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        plt.imshow(result)
-        plt.show()
+        #plt.imshow(result)
+        #plt.show()
 
 
 if __name__ == "__main__":

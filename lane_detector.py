@@ -92,6 +92,8 @@ def detect_lanes(binary_warped):
     #plt.plot(right_fitx, ploty, color='yellow')
     plt.xlim(0, 1280)
     plt.ylim(720, 0)
+    #plt.axis('off')
+    #plt.show()
 
     # Create an image to draw the lines on
     warp_zero = np.zeros_like(binary_warped).astype(np.uint8)

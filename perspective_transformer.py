@@ -31,6 +31,7 @@ def get_original_perspective(image):
     # Get inverse perspective transform matrix
     Minv = cv2.getPerspectiveTransform(dst, src)
 
+    # Reverse the top-down perspective transformation with inverse matrix
     unwarped = cv2.warpPerspective(image, Minv, (x, y), flags=cv2.INTER_LINEAR)
 
     return unwarped
