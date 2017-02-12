@@ -138,7 +138,7 @@ The x- and y- values of the non-zero pixels for each lane (left and right) are u
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2)
     
-The polynomial function is defined as `x = x(y)` since `x` can be uniquely defined by each `y`-value in `ploty`.     
+The polynomial function is defined as _x = f(y)_ since _x_ can be uniquely defined for each value of _y_ in `ploty`.     
     
     ploty = np.linspace(0, binary_warped.shape[0] - 1, binary_warped.shape[0])
     left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
@@ -150,13 +150,12 @@ Frequency histogram     | Fit quadratic curve
 :----------------------:|:-------------------------:
 ![alt text][image13]    |  ![alt text][image14]
 
+### Curvature radius and vehicle position
 
-### Curvature, radius and vehicle position
- 
+
 ### Lane pixel overlay on original image
 The zone between the two fitted polynomial curves is painted before being unwarped to the original perspective.
 The original perspective is obtained by using the matrix of the inverse transformation which is found by the same process as described above but with swapped order of `src` and `dst`.
-
 
     Minv = cv2.getPerspectiveTransform(dst, src)
     unwarped_color_zone = cv2.warpPerspective(warped_color_zone, Minv, (x, y), flags=cv2.INTER_LINEAR)

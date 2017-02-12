@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 '''
 Lane detector. Takes a top-view binary image and finds lane lines.
 Returns the colored zone between the detected lane lines.
-Code from Udacity Self-Driving Car Nanodegree
-Section Advanced Lane Finding - Finding the Lines
+Code from Udacity Self-Driving Car Nanodegree: Advanced Lane Finding - Finding the Lines
 '''
 
 def detect_lanes(binary_warped):
@@ -85,9 +84,13 @@ def detect_lanes(binary_warped):
     left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
     right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
 
+    # Get curvature
+    curvature, vehicle_pos_cm = get_curvature(ploty, left_fitx, right_fitx)
+
+    # Paint activated pixels for each lane in corresponding color
     out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
     out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
-    plt.imshow(out_img)
+    #plt.imshow(out_img)
     #plt.plot(left_fitx, ploty, color='yellow')
     #plt.plot(right_fitx, ploty, color='yellow')
     plt.xlim(0, 1280)
@@ -107,7 +110,40 @@ def detect_lanes(binary_warped):
     # Draw the lane onto the warped blank image
     cv2.fillPoly(color_zone_warp, np.int_([pts]), (0, 255, 0))
 
-    return color_zone_warp
+    return color_zone_warp, curvature, vehicle_pos_cm
+
+
+def get_curvature(ploty, leftx, rightx):
+
+    image_center = 1280 / 2
+    lane_width_px = 840
+
+    # Define conversions in x and y from pixels space to meters
+    ym_per_pix = 30 / 720  # meters per pixel in y dimension
+    xm_per_pix = 3.7 / lane_width_px  # meters per pixel in x dimension
+
+    y_eval = 720
+
+    # Fit new polynomials to x,y in world space
+    left_fit_cr = np.polyfit(ploty * ym_per_pix, leftx * xm_per_pix, 2)
+    right_fit_cr = np.polyfit(ploty * ym_per_pix, rightx * xm_per_pix, 2)
+
+    # Calculate the new radii of curvature
+    left_curverad = ((1 + (2 * left_fit_cr[0] * y_eval * ym_per_pix + left_fit_cr[1]) ** 2) ** 1.5) /np.absolute(
+        2 * left_fit_cr[0])
+    right_curverad = ((1 + (2 * right_fit_cr[0] * y_eval * ym_per_pix + right_fit_cr[1]) ** 2) ** 1.5) / np.absolute(
+        2 * right_fit_cr[0])
+
+    mean_curvature = np.int32(np.mean((left_curverad, right_curverad)))
+
+    # Mean position of the lanes in the image
+    lane_centerx = np.mean((leftx[-1], rightx[-1]))
+
+    # Lane mean position relative to image center. If positive, the lane is offset to the left i.e. positive vehicle is to the right.
+    vehicle_position_px = image_center - lane_centerx
+    vehicle_position_cm = np.int32(vehicle_position_px * xm_per_pix * 100)
+
+    return mean_curvature, vehicle_position_cm
 
 
 def main():

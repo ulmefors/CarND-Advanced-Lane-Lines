@@ -6,6 +6,7 @@ import image_undistorter
 import image_binary_thresholder
 import perspective_transformer
 import lane_detector
+import text_writer
 import os
 from moviepy.editor import VideoFileClip
 
@@ -25,13 +26,16 @@ def pipeline(image):
     top_view = perspective_transformer.get_transformed_perspective(binary_thresholded)
 
     # Detect lanes
-    color_zone_warp = lane_detector.detect_lanes(top_view)
+    color_zone_warp, curvature, vehicle_pos_cm = lane_detector.detect_lanes(top_view)
 
     # Warp the color zone back to original image space using inverse perspective matrix (Minv)
     color_zone = perspective_transformer.get_original_perspective(color_zone_warp)
 
     # Add the color zone to the original image
     result = cv2.addWeighted(image, 1, color_zone, 0.3, 0)
+
+    # Add text with curvature and vehicle position
+    result = text_writer.add_text(result, curvature, vehicle_pos_cm)
 
     # If gray scale convert to triple channel format
     if len(result.shape) == 2:
@@ -47,11 +51,11 @@ def pipeline(image):
 def main():
 
     # Run video or single image
-    video = False
+    video = True
 
     # Specify inputs and outputs
     image_file = 'test_images/test5.jpg'
-    video_file = 'project_video_super_short'
+    video_file = 'project_video_short'
     video_output_dir = 'output_videos/'
 
     # Create output folder if missing
@@ -68,8 +72,8 @@ def main():
         # Plot image with detected lanes
         image = cv2.imread(image_file)
         result = pipeline(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        #plt.imshow(result)
-        #plt.show()
+        plt.imshow(result)
+        plt.show()
 
 
 if __name__ == "__main__":
