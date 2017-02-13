@@ -55,7 +55,7 @@ def main():
 
     # Specify inputs and outputs
     image_file = 'test_images/test5.jpg'
-    video_file = 'project_video_short'
+    video_file = 'project_video'
     video_output_dir = 'output_videos/'
 
     # Create output folder if missing

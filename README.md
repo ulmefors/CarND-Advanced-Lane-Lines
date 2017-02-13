@@ -32,7 +32,7 @@ The steps undertaken are:
 [image15]: ./output_images/color_zone_warped.jpg
 [image16]: ./output_images/color_zone_unwarped.jpg
 [image17]: ./output_images/color_zone_lane_overlay.jpg
-[image18]: ./output_images/
+[image18]: ./output_images/curvature_vehicle_position.jpg
 [image19]: ./output_images/
 [image20]: ./output_images/
 
@@ -138,7 +138,8 @@ The x- and y- values of the non-zero pixels for each lane (left and right) are u
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2)
     
-The polynomial function is defined as _x = f(y)_ since _x_ can be uniquely defined for each value of _y_ in `ploty`.     
+The polynomial functions are defined as _x_ = _f(y)_ since _x_ can be uniquely defined for each value of _y_ in `ploty`.
+The general formulae thus become _x_ = _f(y)_ = _Ay<sup>2</sup> + By + C_ with A, B, C corresponding to the values in `left_fit` and `right_fit` for each lane.
     
     ploty = np.linspace(0, binary_warped.shape[0] - 1, binary_warped.shape[0])
     left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
@@ -150,8 +151,30 @@ Frequency histogram     | Fit quadratic curve
 :----------------------:|:-------------------------:
 ![alt text][image13]    |  ![alt text][image14]
 
-### Curvature radius and vehicle position
+### Curvature radius
+We fit a second degree polynomial to the lane lines _x_ = _f(y)_ = _Ay<sup>2</sup> + By + C_. The curvature radius can be calculated as R<sub>curve</sub> = (1 + (2Ay + B)<sup>2</sup>)<sup>3/2</sup> / |2A| .
+In order to obtain correct curvature values we translate pixel distance to real world coordinates using coefficients.
+The full image height (720 px) corresponds to roughly 30 m whereas the 3.7 m lane is accommodated in 840 px width. New coefficients are calculated for the new values.
 
+    ym_per_pix = 30  / 720  # meters per pixel in y dimension
+    xm_per_pix = 3.7 / 840  # meters per pixel in x dimension
+    left_fit_m = np.polyfit(ploty * ym_per_pix, leftx * xm_per_pix, 2)
+    right_fit_m = np.polyfit(ploty * ym_per_pix, rightx * xm_per_pix, 2)
+
+The curvature is calculated using the real-world coefficients for _A_ and _B_. The expression is evaluated at the vehicle position which is at 720 px, corresponding to 30 m.
+Each lane results in its own curvature. The average of the two is used for the visualization.
+
+### Vehicle position
+The vehicle position with respect to the lane lines was found by comparing the image center to the lane positions.
+
+    image_centerx = image_width / 2
+    lane_centerx = np.mean((leftx[-1], rightx[-1]))
+    vehicle_position_px = image_centerx - lane_centerx
+    
+If the image center has a larger x-value than lane center we know that the vehicle position is closer to the right lane.
+This offset position can be converted into cm real-world distance.
+    
+    vehicle_position_cm = np.int32(vehicle_position_px * xm_per_pix * 100)
 
 ### Lane pixel overlay on original image
 The zone between the two fitted polynomial curves is painted before being unwarped to the original perspective.
@@ -168,8 +191,15 @@ Warped color zone       | Unwarped color zone       | Overlay result
 :----------------------:|:-------------------------:|:------:
 ![alt text][image15]    |  ![alt text][image16]     | ![alt text][image17] 
 
-### Visualization of lanes, curvature and position
+### Visualization of curvature and position
+The values for curvature radius and vehicle position were averaged over a number of frames and printed on top of the image. 
 
+    radii.append(curvature)
+    if len(radii) > smooth_no:
+        radii.pop(0)
+    curvature = np.int(np.mean(radii))
+    cv2.putText(image, 'Curvature radius: {0} m'.format(curvature), (10, 60),
+                font, fontScale, color_white, thickness, cv2.LINE_AA)
 
-
+![alt_text][image18]
 
