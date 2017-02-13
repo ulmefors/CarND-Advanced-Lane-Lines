@@ -25,10 +25,13 @@ def add_text(image, curvature, vehicle_pos_cm):
     curvature = np.int(np.mean(radii))
     vehicle_pos_cm = np.int(np.mean(positions))
 
+    # Positive is right, negative is left
+    side = 'right' if vehicle_pos_cm > 0 else 'left'
+
     # Print curvature radius and vehicle right/left offset position in lane
     cv2.putText(image, 'Curvature radius: {0} m'.format(curvature), (20, 70),
                 font, fontScale, color_white, thickness, cv2.LINE_AA)
-    cv2.putText(image, 'Vehicle position: {0} cm'.format(vehicle_pos_cm), (20, 140),
+    cv2.putText(image, 'Vehicle position: {0} cm {1}'.format(np.abs(vehicle_pos_cm), side), (20, 140),
                 font, fontScale, color_white, thickness, cv2.LINE_AA)
 
     return image

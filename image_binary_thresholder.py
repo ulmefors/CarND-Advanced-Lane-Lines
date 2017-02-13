@@ -29,7 +29,7 @@ def mag_thresh(gray, sobel_kernel=3, thresh=(0, 255)):
     return mag_binary
 
 
-def dir_threshold(gray, sobel_kernel=3, thresh=(0, np.pi / 2)):
+def dir_thresh(gray, sobel_kernel=3, thresh=(0, np.pi / 2)):
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
     sobely = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
 
@@ -43,15 +43,18 @@ def dir_threshold(gray, sobel_kernel=3, thresh=(0, np.pi / 2)):
     return dir_binary
 
 
-def get_binary(image):
-
+def hls_thresh(image, thresh=(0, 255)):
     # HLS
     hls = cv2.cvtColor(np.copy(image), cv2.COLOR_RGB2HLS)
     s_channel = hls[:, :, 2]
-    s_thresh_min = 160
-    s_thresh_max = 255
     s_binary = np.zeros_like(s_channel)
-    s_binary[(s_channel >= s_thresh_min) & (s_channel <= s_thresh_max)] = 1
+    s_binary[(s_channel >= thresh[0]) & (s_channel <= thresh[1])] = 1
+    return s_binary
+
+
+def get_binary(image):
+    # Apply S-channel thresholding using HLS color space
+    s_binary = hls_thresh(image, thresh=(160, 255))
 
     gray = cv2.cvtColor(np.copy(image), cv2.COLOR_BGR2GRAY)
 
@@ -62,7 +65,7 @@ def get_binary(image):
     gradx = abs_sobel_thresh(gray, orient='x', sobel_kernel=ksize, thresh=(40, 250))
     grady = abs_sobel_thresh(gray, orient='y', sobel_kernel=ksize, thresh=(40, 250))
     mag_binary = mag_thresh(gray, sobel_kernel=ksize, thresh=(50, 250))
-    dir_binary = dir_threshold(gray, sobel_kernel=ksize, thresh=(np.pi / 4 * 0.6, np.pi / 4 * 1.5))
+    dir_binary = dir_thresh(gray, sobel_kernel=ksize, thresh=(np.pi / 4 * 0.6, np.pi / 4 * 1.5))
 
     combined = np.zeros_like(gray)
     combined_grad = np.zeros_like(gray)
