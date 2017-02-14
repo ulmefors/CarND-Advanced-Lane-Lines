@@ -13,7 +13,9 @@ The steps undertaken are:
 8. Apply lane pixels on original input image
 9. Visualize image with corresponding lanes and curvature/position values
 
-The main script is found in `pipeline.py`.
+Main script is `pipeline.py`.
+
+Output video is `project_video_lane_detection.mp4`.
 
 [//]: # (Image References)
 [image1]: ./output_images/chessboard_original.jpg "Chessboard"
@@ -228,3 +230,9 @@ File: `text_writer.py`
 ## Final result
 
 [![alt_text][image18]](./project_video_lane_detection.mp4)
+
+## Discussion
+Lane detection works reasonable well on `project_video.mp4` even if there are frames where the polynomial fit outputs somewhat too strong curvature.
+These instances can happen when high gradient areas (shadows or marks) are found in the lane which can result in erroneous end-point of the fitted curve.
+Performance on more challenging videos is unsatisfactory. In order to achieve better results it will be necessary to implement smoothing using previous frames instead of relying solely on a single frame for detection.
+ 
